@@ -1,0 +1,5 @@
+# Optional heavy ML deps for transformer-based FinBERT sentiment.
+# Install only when you want model-grade sentiment: pip install -r requirements-ml.txt
+# The app falls back to VADER (in requirements.txt) when these are absent.
+transformers>=4.42,<5
+torch>=2.2

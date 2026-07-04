@@ -1,0 +1,90 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Data Flow — Daily Cycle" id="df-1">
+    <mxGraphModel dx="1100" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Indian Market Dashboard — Data Flow (daily cycle + on-demand render)" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="840" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- Main vertical pipeline -->
+        <mxCell id="cron" value="⏰ Cron trigger (GitHub Actions)&#10;~08:00 IST, pre-market" style="rounded=1;arcSize=40;whiteSpace=wrap;html=1;fillColor=#E1D5E7;strokeColor=#9673A6;" vertex="1" parent="1">
+          <mxGeometry x="400" y="60" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fetch" value="1 · Fetch raw data&#10;PriceProvider · NSEProvider · NewsProvider · GlobalCues" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="380" y="140" width="260" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="norm" value="2 · Normalize + dedup&#10;clean, align timestamps, handle rate limits/fallbacks" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="380" y="225" width="260" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="persist" value="3 · Persist&#10;Cache (hot) + SQLite (daily history)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="400" y="310" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sent" value="4 · Sentiment scoring&#10;FinBERT on news headlines" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="400" y="410" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="engine" value="5 · Scoring engine&#10;Fear/Greed · Daily Bias · Sector ranking · Swing screen" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="370" y="490" width="280" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="signals" value="6 · Generate signals&#10;bias, hot sectors, swing candidates (w/ entry/stop/target)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="380" y="575" width="260" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="decide" value="7 · Signal strength&#10;&#8805; threshold?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="440" y="660" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="dispatch" value="8 · AlertDispatcher&#10;fan-out" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="410" y="790" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tg" value="📩 Telegram" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="360" y="870" width="120" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="em" value="✉️ Email (SMTP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="540" y="870" width="130" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="noop" value="No alert&#10;(dashboard still updates)" style="rounded=1;arcSize=40;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="680" y="675" width="160" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- Right branch: on-demand UI render -->
+        <mxCell id="user" value="👤 Trader opens dashboard" style="rounded=1;arcSize=40;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="1">
+          <mxGeometry x="720" y="300" width="200" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="ui" value="Dashboard UI renders&#10;reads Cache/SQLite → shows scores, feed,&#10;sectors, candidates (dark/light theme)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="700" y="370" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Left branch: history → backtest -->
+        <mxCell id="hist" value="Signals + snapshot&#10;appended to history (SQLite)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="90" y="565" width="200" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="bt" value="Phase 9: Backtest&#10;score vs realized moves → tune weights" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="670" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Edges: main pipeline -->
+        <mxCell id="f1" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="cron" target="fetch"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f2" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="fetch" target="norm"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f3" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="norm" target="persist"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f4" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="persist" target="sent"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f5" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="sent" target="engine"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f6" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="engine" target="signals"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f7" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="signals" target="decide"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f8" value="yes" style="endArrow=block;html=1;rounded=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="decide" target="dispatch"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f9" value="no" style="endArrow=block;html=1;rounded=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="decide" target="noop"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f10" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="dispatch" target="tg"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f11" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="dispatch" target="em"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Edges: UI branch -->
+        <mxCell id="f12" style="endArrow=block;html=1;rounded=1;" edge="1" parent="1" source="user" target="ui"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f13" value="reads (cached)" style="endArrow=open;dashed=1;html=1;rounded=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="persist" target="ui"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Edges: history/backtest branch -->
+        <mxCell id="f14" style="endArrow=block;html=1;rounded=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="signals" target="hist"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="f15" style="endArrow=block;html=1;rounded=1;dashed=1;" edge="1" parent="1" source="hist" target="bt"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

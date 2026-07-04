@@ -1,0 +1,15 @@
+# Streamlit base theme — mirrors docs/design-system.md (dark default).
+# The in-app dark/light toggle overrides these at runtime via injected CSS variables.
+[theme]
+base = "dark"
+primaryColor = "#2f81f7"
+backgroundColor = "#0d1117"
+secondaryBackgroundColor = "#161b22"
+textColor = "#e6edf3"
+font = "sans serif"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false

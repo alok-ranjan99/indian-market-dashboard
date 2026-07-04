@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indian Market Dashboard — Master Plan</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --border:#30363d;
+    --text:#e6edf3; --muted:#9aa7b4; --accent:#2f81f7; --green:#3fb950;
+    --red:#f85149; --amber:#d29922; --purple:#a371f7;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.6;font-size:16px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+  header{background:linear-gradient(135deg,#0d1117 0%,#161b2e 60%,#1a2b1f 100%);
+         border-bottom:1px solid var(--border);padding:56px 20px 40px;text-align:center}
+  header h1{margin:0 0 8px;font-size:2.1rem;letter-spacing:-.02em}
+  header .flag{font-size:2.4rem}
+  header p{color:var(--muted);margin:6px 0 0;max-width:720px;margin-inline:auto}
+  .badges{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .badge{background:var(--panel);border:1px solid var(--border);padding:5px 12px;border-radius:20px;
+         font-size:.8rem;color:var(--muted)}
+  nav{position:sticky;top:0;background:rgba(13,17,23,.92);backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--border);z-index:10;padding:10px 20px;display:flex;gap:6px;
+      flex-wrap:wrap;justify-content:center}
+  nav a{color:var(--muted);text-decoration:none;font-size:.85rem;padding:5px 10px;border-radius:6px}
+  nav a:hover{background:var(--panel);color:var(--text)}
+  section{margin-top:44px;scroll-margin-top:64px}
+  h2{font-size:1.5rem;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:16px}
+  h3{font-size:1.15rem;color:#c9d5e0;margin-top:24px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:14px 0}
+  .grid{display:grid;gap:14px}
+  .grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92rem}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;background:var(--panel2)}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .yes{color:var(--green);font-weight:600}
+  .no{color:var(--red);font-weight:600}
+  .maybe{color:var(--amber);font-weight:600}
+  .pill{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.75rem;font-weight:600}
+  .pill.high{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.35)}
+  .pill.opt{background:rgba(210,153,34,.15);color:var(--amber);border:1px solid rgba(210,153,34,.35)}
+  .pill.low{background:rgba(163,113,247,.12);color:var(--purple);border:1px solid rgba(163,113,247,.3)}
+  .callout{border-left:4px solid var(--accent);background:var(--panel2);padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .callout.warn{border-color:var(--amber)}
+  .callout.danger{border-color:var(--red)}
+  .callout.ok{border-color:var(--green)}
+  code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:.86em;
+       font-family:"SF Mono",Menlo,Consolas,monospace;color:#f0c674}
+  pre{background:#0a0e14;border:1px solid var(--border);border-radius:10px;padding:16px;overflow-x:auto}
+  pre code{background:none;padding:0;color:#c9d5e0}
+  ul.check{list-style:none;padding-left:0}
+  ul.check li{padding:4px 0 4px 28px;position:relative}
+  ul.check li::before{content:"✓";position:absolute;left:4px;color:var(--green);font-weight:700}
+  ul.todo li::before{content:"☐";color:var(--muted)}
+  .tab-feature{border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--panel)}
+  .tab-feature h4{margin:0 0 8px;font-size:1.05rem}
+  .tab-feature .emoji{font-size:1.3rem;margin-right:6px}
+  .meter{height:10px;border-radius:6px;background:linear-gradient(90deg,var(--red),var(--amber),var(--green));margin:10px 0}
+  .roadmap{counter-reset:phase}
+  .phase{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--border)}
+  .phase .n{flex:0 0 40px;height:40px;border-radius:50%;background:var(--panel2);border:1px solid var(--border);
+            display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent)}
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;text-align:center}
+  .muted{color:var(--muted)}
+  a.inline{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <div class="flag">🇮🇳📈</div>
+  <h1>Indian Market Sentiment &amp; Swing-Trading Dashboard</h1>
+  <p>A professional-grade, free-to-run dashboard that tracks daily Indian market news, scores
+     <strong>fear vs. greed</strong>, gauges <strong>bullish/bearish</strong> bias, ranks
+     <strong>hot sectors</strong>, and surfaces <strong>swing candidates</strong> — with real risk management.</p>
+  <div class="badges">
+    <span class="badge">Owner: Alok</span>
+    <span class="badge">Created: 2026-07-04</span>
+    <span class="badge">Status: Planning → Build</span>
+    <span class="badge">Stack: Python · Streamlit</span>
+    <span class="badge">Universe: Nifty 50</span>
+  </div>
+</header>
+
+<nav>
+  <a href="#reality">Reality Check</a>
+  <a href="#feasibility">Feasibility</a>
+  <a href="#mcps">MCPs &amp; Tools</a>
+  <a href="#stack">Stack</a>
+  <a href="#features">Dashboard</a>
+  <a href="#scoring">Scoring</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#mcp-setup">MCP Setup</a>
+  <a href="#next">Next</a>
+</nav>
+
+<div class="wrap">
+
+<section id="reality">
+  <h2>0 · Honest Reality Check</h2>
+  <div class="callout danger">
+    <strong>No system can guarantee "Stock X will rise 4–10% today."</strong> Not hedge funds, not quants,
+    not this dashboard. If such a system existed, its owner would quietly become the richest person alive —
+    not sell it. Anyone claiming otherwise is selling a fantasy.
+  </div>
+  <p>What professionals actually build — and what we're building — is a <strong>decision-support system</strong>
+     that stacks <em>probabilities</em> in your favor by combining sentiment + technicals + news + momentum,
+     then surfaces a <strong>shortlist of candidates worth your own review</strong>. You make the final call and
+     manage risk. That is what makes swing traders profitable — not prediction, but edge + discipline.</p>
+  <div class="callout ok">
+    <strong>Reframed goal:</strong> Give you a daily, data-driven edge — a shortlist of high-probability swing
+    candidates with transparent reasoning — while enforcing risk management so winners outweigh losers over time.
+  </div>
+</section>
+
+<section id="feasibility">
+  <h2>1 · Is it possible?</h2>
+  <table>
+    <tr><th>Feature</th><th>Feasible?</th><th>How</th></tr>
+    <tr><td>Daily Indian news aggregation</td><td class="yes">✅ Yes</td><td>RSS (Moneycontrol, ET, Livemint, BS) + NewsAPI</td></tr>
+    <tr><td>Fear/Greed score (0–100)</td><td class="yes">✅ Yes</td><td>News NLP + India VIX + breadth + PCR</td></tr>
+    <tr><td>Bullish/Bearish daily bias</td><td class="maybe">⚠️ Probability</td><td>Trend + breadth + sentiment + FII/DII</td></tr>
+    <tr><td>Sector rotation / hot sectors</td><td class="maybe">⚠️ Ranking</td><td>Sectoral indices + relative strength</td></tr>
+    <tr><td>Swing-trade candidates</td><td class="maybe">⚠️ Shortlist</td><td>Technical screen + sentiment overlay</td></tr>
+    <tr><td>"Guaranteed 4–10% today"</td><td class="no">❌ No</td><td>Nobody can — probabilities + risk mgmt instead</td></tr>
+  </table>
+  <p class="muted">Verdict: highly buildable and genuinely useful. We just set honest expectations on the prediction parts.</p>
+</section>
+
+<section id="mcps">
+  <h2>2 · MCPs &amp; Tools</h2>
+  <h3>MCPs (help build &amp; manage the project)</h3>
+  <table>
+    <tr><th>MCP</th><th>Purpose</th><th>Cost</th><th>Priority</th></tr>
+    <tr><td>GitHub</td><td>Code hosting, version control, deploy</td><td>Free</td><td><span class="pill high">High</span></td></tr>
+    <tr><td>Filesystem</td><td>Read/write project files</td><td>Free</td><td><span class="pill high">High</span></td></tr>
+    <tr><td>Fetch / Web</td><td>Pull live news &amp; NSE data in dev</td><td>Free</td><td><span class="pill high">High</span></td></tr>
+    <tr><td>Playwright</td><td>Scrape sites without APIs</td><td>Free</td><td><span class="pill opt">Optional</span></td></tr>
+    <tr><td>Figma</td><td>UI mockups</td><td>Free tier</td><td><span class="pill opt">Optional</span></td></tr>
+    <tr><td>Sequential-Thinking</td><td>Reason through scoring logic</td><td>Free</td><td><span class="pill low">Low</span></td></tr>
+  </table>
+  <div class="callout"><strong>Reality:</strong> the app talks to data APIs directly in Python. MCPs mostly speed up
+    the <em>build</em> and help <em>manage</em> the project. We can start with just <strong>GitHub + Fetch</strong>.</div>
+
+  <h3>Free data sources (the actual engine)</h3>
+  <table>
+    <tr><th>Source</th><th>Gives us</th><th>Key?</th></tr>
+    <tr><td>yfinance</td><td>Stock/index prices, India VIX</td><td class="yes">No</td></tr>
+    <tr><td>NSE public endpoints</td><td>Sectoral indices, FII/DII, option chain, PCR</td><td class="yes">No</td></tr>
+    <tr><td>RSS feeds</td><td>News headlines</td><td class="yes">No</td></tr>
+    <tr><td>NewsAPI.org</td><td>Aggregated news</td><td class="maybe">Free key</td></tr>
+    <tr><td>Hugging Face FinBERT</td><td>Financial sentiment scoring</td><td class="yes">No</td></tr>
+  </table>
+
+  <h3>Hosting (free)</h3>
+  <div class="grid cols-3">
+    <div class="card"><strong>Streamlit Cloud</strong><br><span class="muted">Host the dashboard, open anywhere incl. phone</span></div>
+    <div class="card"><strong>Render / Railway</strong><br><span class="muted">Scheduled daily data pulls</span></div>
+    <div class="card"><strong>GitHub Actions</strong><br><span class="muted">Free cron for data refresh</span></div>
+  </div>
+
+  <h3>Optional paid upgrades (later)</h3>
+  <table>
+    <tr><th>Upgrade</th><th>Benefit</th><th>Cost</th></tr>
+    <tr><td>Zerodha Kite Connect</td><td>Real-time Indian data</td><td>~₹2000/mo</td></tr>
+    <tr><td>Upstox / Dhan API</td><td>Cheaper real-time data</td><td>Free–low</td></tr>
+    <tr><td>OpenAI / Anthropic API</td><td>LLM news summaries &amp; smarter sentiment</td><td>Pay-as-go</td></tr>
+  </table>
+</section>
+
+<section id="stack">
+  <h2>3 · Tech Stack</h2>
+  <div class="grid cols-2">
+    <div class="card"><strong>Language</strong> · Python 3.11<br><span class="muted">Best for finance data, fastest to build</span></div>
+    <div class="card"><strong>UI</strong> · Streamlit<br><span class="muted">Pro dashboards, minimal code, free hosting</span></div>
+    <div class="card"><strong>Prices</strong> · yfinance + NSE<br><span class="muted">Free Indian market data</span></div>
+    <div class="card"><strong>News</strong> · RSS + NewsAPI + feedparser<br><span class="muted">Free daily news</span></div>
+    <div class="card"><strong>Sentiment</strong> · FinBERT / VADER<br><span class="muted">Purpose-built for financial text</span></div>
+    <div class="card"><strong>Technicals</strong> · pandas-ta<br><span class="muted">RSI, MACD, Bollinger, ATR, breakouts</span></div>
+    <div class="card"><strong>Charts</strong> · Plotly<br><span class="muted">Interactive, professional</span></div>
+    <div class="card"><strong>Storage</strong> · SQLite → Postgres<br><span class="muted">Daily history for backtesting</span></div>
+  </div>
+</section>
+
+<section id="features">
+  <h2>4 · What the Dashboard Includes</h2>
+  <div class="grid cols-2">
+    <div class="tab-feature">
+      <h4><span class="emoji">📊</span>Tab 1 · Market Pulse</h4>
+      <div class="meter"></div>
+      Fear &amp; Greed dial (0–100), Today's Bias card with confidence % + reasons, Nifty 50 &amp; Bank Nifty
+      snapshot, India VIX, and FII/DII institutional flows.
+    </div>
+    <div class="tab-feature">
+      <h4><span class="emoji">📰</span>Tab 2 · News &amp; Sentiment</h4>
+      Live scored headlines (pos/neu/neg), sentiment trend chart, filter by market/sector/stock,
+      and an auto-generated "what's moving the market today" summary.
+    </div>
+    <div class="tab-feature">
+      <h4><span class="emoji">🔥</span>Tab 3 · Sector Rotation</h4>
+      Heatmap of all NSE sectoral indices, ranked by % change + relative strength + momentum.
+      Highlights hot sectors where money is flowing, with news-sentiment overlay.
+    </div>
+    <div class="tab-feature">
+      <h4><span class="emoji">🎯</span>Tab 4 · Swing Candidates</h4>
+      Technical + sentiment screener. Per candidate: RSI, MACD, volume spike, breakout status, a transparent
+      Swing Score (0–100), and suggested entry / stop-loss / target with risk:reward.
+    </div>
+    <div class="tab-feature">
+      <h4><span class="emoji">🛡️</span>Tab 5 · Risk &amp; Position Sizing</h4>
+      Position-size calculator (capital + risk %), stop/target calculator, portfolio risk overview,
+      and a discipline checklist. <em>This is what makes you profitable.</em>
+    </div>
+    <div class="tab-feature">
+      <h4><span class="emoji">📈</span>Tab 6 · Journal &amp; Backtest</h4>
+      Log trades, track win rate &amp; avg P/L. Stored daily signals let us backtest whether the Swing Score
+      actually works — the professional feedback loop.
+    </div>
+  </div>
+  <h3>⚙️ Extra ideas for your strategy</h3>
+  <div class="grid cols-3">
+    <div class="card"><strong>Global cues</strong><br><span class="muted">Dow/Nasdaq, GIFT Nifty, crude, USD/INR — sets the morning tone</span></div>
+    <div class="card"><strong>Event calendar</strong><br><span class="muted">RBI, earnings, budget, expiry — don't trade blind into events</span></div>
+    <div class="card"><strong>Options signals</strong><br><span class="muted">PCR, max pain, OI buildup — powerful for direction</span></div>
+    <div class="card"><strong>Alerts</strong><br><span class="muted">Telegram + email on strong signals (free)</span></div>
+    <div class="card"><strong>Avoid list</strong><br><span class="muted">Bad-news / circuit / high-risk stocks today</span></div>
+    <div class="card"><strong>Pre-market briefing</strong><br><span class="muted">One-screen 9:00 AM summary before open</span></div>
+  </div>
+</section>
+
+<section id="scoring">
+  <h2>5 · How Scoring Works (no black box)</h2>
+  <div class="grid cols-3">
+    <div class="card">
+      <h4>Fear/Greed (0–100)</h4>
+      <ul class="check" style="font-size:.9rem">
+        <li>India VIX (inverted) — 25%</li>
+        <li>Market breadth — 20%</li>
+        <li>News sentiment (FinBERT) — 20%</li>
+        <li>Nifty momentum — 20%</li>
+        <li>Put/Call ratio — 15%</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Daily Bias</h4>
+      <ul class="check" style="font-size:.9rem">
+        <li>Nifty/BankNifty vs 20/50 DMA</li>
+        <li>FII/DII net flow direction</li>
+        <li>Fear/Greed score</li>
+        <li>Global cues (GIFT Nifty gap)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Swing Score (0–100)</h4>
+      <ul class="check" style="font-size:.9rem">
+        <li>Trend alignment — 25%</li>
+        <li>Momentum (RSI/MACD) — 20%</li>
+        <li>Volume confirmation — 15%</li>
+        <li>Breakout quality — 20%</li>
+        <li>Sector strength — 10%</li>
+        <li>News sentiment — 10%</li>
+      </ul>
+    </div>
+  </div>
+  <p class="muted">Every number shows <em>why</em> it is what it is. No mystery signals.</p>
+</section>
+
+<section id="roadmap">
+  <h2>6 · Build Roadmap</h2>
+  <div class="card roadmap">
+    <div class="phase"><div class="n">0</div><div><strong>Setup</strong> — GitHub repo, folder structure, plan, MCPs. <span class="muted">Foundation ready.</span></div></div>
+    <div class="phase"><div class="n">1</div><div><strong>Data layer</strong> — prices, indices, news, VIX from free sources. <span class="muted">Data flowing.</span></div></div>
+    <div class="phase"><div class="n">2</div><div><strong>Market Pulse</strong> — Fear/Greed meter + bias card. <span class="muted">First visible dashboard.</span></div></div>
+    <div class="phase"><div class="n">3</div><div><strong>News &amp; Sentiment</strong> — FinBERT scoring. <span class="muted">Sentiment working.</span></div></div>
+    <div class="phase"><div class="n">4</div><div><strong>Sector + Swing screener</strong>. <span class="muted">Core trading value.</span></div></div>
+    <div class="phase"><div class="n">5</div><div><strong>Risk calculator + Journal</strong>. <span class="muted">Profitability tools.</span></div></div>
+    <div class="phase"><div class="n">6</div><div><strong>Deploy</strong> to Streamlit Cloud + alerts. <span class="muted">Access anywhere.</span></div></div>
+    <div class="phase"><div class="n">7</div><div><strong>Backtest + refine</strong> scoring. <span class="muted">Continuous improvement.</span></div></div>
+  </div>
+</section>
+
+<section id="requirements">
+  <h2>7 · Requirements &amp; Confirmed Decisions</h2>
+  <div class="grid cols-2">
+    <div class="card">
+      <h3 style="margin-top:0">Confirmed ✅</h3>
+      <ul class="check">
+        <li>Skill level: Experienced software engineer</li>
+        <li>Budget: Free-first, paid upgrade path</li>
+        <li>Hosting: Both — local first, then Streamlit Cloud</li>
+        <li>Broker: None yet → free data sources</li>
+        <li>Universe: Nifty 50</li>
+        <li>Alerts: Telegram + email</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Accounts to create (free)</h3>
+      <ul class="check todo">
+        <li>GitHub</li>
+        <li>Streamlit Community Cloud (sign in w/ GitHub)</li>
+        <li>NewsAPI.org API key</li>
+        <li>Telegram bot (for alerts)</li>
+        <li>(Optional) Figma</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="mcp-setup">
+  <h2>8 · MCP Setup — Quick Start</h2>
+  <p>Detected: ✅ <code>claude</code>, <code>node v26</code>, <code>npm</code>, <code>git</code> · ❌ <code>gh</code>, <code>docker</code> (not needed).
+     Full guide: <code>docs/mcp-setup-guide.md</code>.</p>
+
+  <h3>1 · GitHub MCP ⭐</h3>
+  <p class="muted">Create a fine-grained PAT at github.com/settings/tokens (Contents, PRs, Issues: R/W), then:</p>
+  <pre><code>claude mcp add --transport http github https://api.githubcopilot.com/mcp/ \
+  -H "Authorization: Bearer github_pat_YOUR_TOKEN_HERE" \
+  -s user</code></pre>
+
+  <h3>2 · Fetch MCP ⭐ (news / NSE during dev)</h3>
+  <pre><code>claude mcp add fetch -s user -- npx -y @modelcontextprotocol/server-fetch</code></pre>
+
+  <h3>3 · Filesystem MCP (optional extra folders)</h3>
+  <pre><code>claude mcp add filesystem -s local \
+  -- npx -y @modelcontextprotocol/server-filesystem \
+     /Users/alok.ranjan/Documents/Projects/indian-market-dashboard</code></pre>
+
+  <h3>4 · Playwright MCP (optional scraping)</h3>
+  <pre><code>claude mcp add playwright -s user -- npx -y @playwright/mcp@latest</code></pre>
+
+  <h3>5 · Figma MCP (optional design)</h3>
+  <pre><code>claude mcp add figma -s user \
+  -e FIGMA_API_KEY=figd_YOUR_TOKEN \
+  -- npx -y figma-developer-mcp --stdio</code></pre>
+
+  <p>Verify with <code>claude mcp list</code> · remove with <code>claude mcp remove &lt;name&gt;</code>.</p>
+  <div class="callout warn"><strong>Minimal to start:</strong> just add <strong>GitHub + Fetch</strong> now; add the rest when needed.</div>
+</section>
+
+<section id="next">
+  <h2>9 · Next Step</h2>
+  <div class="card">
+    <ol>
+      <li>You: run the <strong>GitHub + Fetch</strong> MCP commands above (create the PAT first).</li>
+      <li>You: re-attach the reference image so I can save it to memory (last upload was a placeholder).</li>
+      <li>Me: scaffold the project (<code>src/</code>, <code>requirements.txt</code>, config) + create the GitHub repo.</li>
+      <li>Me: build <strong>Phase 1 + 2</strong> so you see a working Fear/Greed meter &amp; news feed locally this session.</li>
+      <li>We iterate tab by tab.</li>
+    </ol>
+  </div>
+  <div class="callout danger">
+    <strong>Disclaimer:</strong> Decision-support tool, not financial advice. No signal guarantees profit.
+    The 4–10% target is achievable on <em>winning</em> trades, not every trade — profitability comes from risk
+    management (cut losses small, let winners run), not prediction. Always use stop-losses; risk ≤1–2% per trade.
+  </div>
+</section>
+
+<footer>
+  Indian Market Sentiment &amp; Swing-Trading Dashboard · Plan generated 2026-07-04 ·
+  Source of truth: <code>PLAN.md</code> · Open this file in any browser.
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Env / secrets — NEVER commit real credentials
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Data / caches (regenerated at runtime)
+data/*.db
+data/*.sqlite
+data/cache/
+*.log
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Playwright verification artifacts
+prototype/.playwright-mcp/

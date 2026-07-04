@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indian Market Dashboard — UI Blueprint</title>
+<style>
+  /* ===== Design tokens (from docs/design-system.md) ===== */
+  :root{
+    --bull:#3fb950; --bear:#f85149; --neutral:#d29922; --info:#2f81f7; --accent:#2f81f7;
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --border:#30363d;
+    --text:#e6edf3; --muted:#9aa7b4; --shadow:0 1px 3px rgba(0,0,0,.4);
+    --c1:#2f81f7;--c2:#d29922;--c3:#3fb950;--c4:#a371f7;--c5:#f85149;--c6:#00a3a3;--c7:#e8710a;
+  }
+  html[data-theme="light"]{
+    --bull:#137333; --bear:#c5221f; --neutral:#b06f00; --info:#1a73e8; --accent:#1a73e8;
+    --bg:#ffffff; --panel:#f6f8fa; --panel2:#eef1f4; --border:#d0d7de;
+    --text:#1f2328; --muted:#636c76; --shadow:0 1px 3px rgba(0,0,0,.08);
+    --c1:#1a73e8;--c2:#b06f00;--c3:#137333;--c4:#8250df;--c5:#c5221f;--c6:#00807f;--c7:#c2540a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;transition:background .2s,color .2s}
+  .up{color:var(--bull)} .down{color:var(--bear)} .flat{color:var(--neutral)}
+  .mut{color:var(--muted)}
+  h1,h2,h3,h4{margin:0}
+  /* ===== Header ===== */
+  header{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--border);
+         padding:10px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--bull);box-shadow:0 0 8px var(--bull)}
+  .ticker{display:flex;gap:14px;flex-wrap:wrap;margin-left:6px;font-size:.82rem}
+  .ticker .t{display:flex;gap:6px;align-items:baseline}
+  .ticker .t b{font-weight:600}
+  .spacer{flex:1}
+  .toggle{cursor:pointer;background:var(--panel2);border:1px solid var(--border);color:var(--text);
+          padding:6px 12px;border-radius:20px;font-size:.8rem;display:flex;gap:6px;align-items:center}
+  .disc{font-size:.72rem;color:var(--muted);background:var(--panel2);border:1px solid var(--border);
+        padding:3px 8px;border-radius:6px}
+  /* ===== Tabs ===== */
+  nav.tabs{position:sticky;top:53px;z-index:19;background:var(--bg);border-bottom:1px solid var(--border);
+           display:flex;gap:2px;padding:0 14px;overflow-x:auto}
+  nav.tabs button{background:none;border:none;color:var(--muted);padding:12px 14px;cursor:pointer;
+                  font-size:.88rem;border-bottom:2px solid transparent;white-space:nowrap}
+  nav.tabs button.active{color:var(--text);border-bottom-color:var(--accent);font-weight:600}
+  main{max-width:1200px;margin:0 auto;padding:18px 20px 80px}
+  .tab{display:none} .tab.active{display:block}
+  /* ===== Cards / grid ===== */
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+  .card h3{font-size:.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .card .sub{font-size:.75rem;color:var(--muted);font-weight:400}
+  .metric{display:flex;flex-direction:column;gap:2px}
+  .metric .val{font-size:1.5rem;font-weight:700}
+  .metric .lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .metric .delta{font-size:.82rem;font-weight:600}
+  .pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600}
+  .pill.pos{background:color-mix(in srgb,var(--bull) 18%,transparent);color:var(--bull)}
+  .pill.neg{background:color-mix(in srgb,var(--bear) 18%,transparent);color:var(--bear)}
+  .pill.neu{background:color-mix(in srgb,var(--neutral) 18%,transparent);color:var(--neutral)}
+  table{width:100%;border-collapse:collapse;font-size:.85rem}
+  th,td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+  tbody tr:hover{background:var(--panel2)}
+  .bar{height:6px;border-radius:4px;background:var(--panel2);overflow:hidden;min-width:60px;display:inline-block;vertical-align:middle;width:70px}
+  .bar > i{display:block;height:100%}
+  .chip{background:var(--panel2);border:1px solid var(--border);color:var(--muted);padding:4px 10px;
+        border-radius:16px;font-size:.78rem;cursor:pointer}
+  .chip.on{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);border-color:var(--accent)}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  input,select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 10px;
+               border-radius:8px;font-size:.85rem;width:100%}
+  label.f{font-size:.75rem;color:var(--muted);display:block;margin-bottom:4px}
+  .note{font-size:.75rem;color:var(--muted);margin-top:8px}
+  .banner{background:color-mix(in srgb,var(--neutral) 12%,transparent);border:1px solid var(--neutral);
+          border-radius:10px;padding:10px 14px;font-size:.8rem;color:var(--text);margin-bottom:16px}
+  ul.reasons{margin:6px 0 0;padding-left:18px} ul.reasons li{margin:3px 0}
+  .sechm{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .sechm .cell{border-radius:8px;padding:10px;color:#fff;display:flex;flex-direction:column;gap:2px;font-size:.8rem}
+  .sechm .cell b{font-size:1rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot"></span> IMD · Market Radar</div>
+  <div class="ticker" id="ticker"></div>
+  <div class="spacer"></div>
+  <span class="disc">Blueprint · mock data · not financial advice</span>
+  <button class="toggle" onclick="toggleTheme()"><span id="themeIcon">🌙</span> <span id="themeLbl">Dark</span></button>
+</header>
+
+<nav class="tabs" id="tabnav"></nav>
+
+<main>
+  <!-- ============ MARKET PULSE ============ -->
+  <section class="tab active" id="pulse">
+    <div class="banner">📋 <b>Pre-market briefing · 08:00 IST</b> — Global cues mildly positive (SGX/GIFT Nifty +0.3%). US closed higher, crude soft. FIIs net sellers yesterday, DIIs absorbing. Bias leans <b class="up">cautiously bullish</b>; IT & Auto in focus on results. Expiry Thursday — expect intraday volatility.</div>
+    <div class="grid g2" style="grid-template-columns:minmax(300px,1fr) minmax(300px,1.2fr)">
+      <div class="card">
+        <h3>Fear &amp; Greed Index <span class="sub">composite</span></h3>
+        <div style="display:flex;align-items:center;gap:16px">
+          <svg id="gauge" viewBox="0 0 200 118" width="220" height="130"></svg>
+          <div>
+            <div style="font-size:2.4rem;font-weight:800" id="fgVal">—</div>
+            <div class="pill neu" id="fgLbl">—</div>
+            <div class="note">VIX 25% · Breadth 20% · News 20% · Momentum 20% · PCR 15%</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Today's Bias <span class="sub">probability, not a guarantee</span></h3>
+        <div class="row" style="align-items:center;gap:20px">
+          <div class="metric"><span class="val up">Cautiously Bullish</span><span class="lbl">Direction</span></div>
+          <div class="metric"><span class="val">62%</span><span class="lbl">Confidence</span></div>
+        </div>
+        <ul class="reasons mut">
+          <li>Nifty above 20 &amp; 50 DMA — trend intact <span class="up">▲</span></li>
+          <li>GIFT Nifty gap-up +0.3% — positive global cue <span class="up">▲</span></li>
+          <li>FII net sellers (₹-1,240 Cr) — caution <span class="down">▼</span></li>
+          <li>DII net buyers (₹+2,010 Cr) — support <span class="up">▲</span></li>
+          <li>India VIX 13.2 — low fear, calm <span class="up">▲</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin:22px 0 10px">Key Indices &amp; Flows</h3>
+    <div class="grid g4">
+      <div class="card metric"><span class="lbl">Nifty 50</span><span class="val">24,318</span><span class="delta up">+142 (+0.59%)</span></div>
+      <div class="card metric"><span class="lbl">Bank Nifty</span><span class="val">52,040</span><span class="delta up">+318 (+0.61%)</span></div>
+      <div class="card metric"><span class="lbl">India VIX</span><span class="val">13.20</span><span class="delta down">-0.45 (-3.3%)</span></div>
+      <div class="card metric"><span class="lbl">FII (₹ Cr)</span><span class="val down">-1,240</span><span class="delta mut">net sell</span></div>
+      <div class="card metric"><span class="lbl">DII (₹ Cr)</span><span class="val up">+2,010</span><span class="delta mut">net buy</span></div>
+    </div>
+
+    <h3 style="margin:22px 0 10px">Global Cues <span class="sub mut">morning tone-setters</span></h3>
+    <div class="grid g4">
+      <div class="card metric"><span class="lbl">Dow Jones</span><span class="val">39,410</span><span class="delta up">+0.42%</span></div>
+      <div class="card metric"><span class="lbl">Nasdaq</span><span class="val">17,880</span><span class="delta up">+0.68%</span></div>
+      <div class="card metric"><span class="lbl">GIFT Nifty</span><span class="val">24,390</span><span class="delta up">+0.30%</span></div>
+      <div class="card metric"><span class="lbl">Crude (Brent)</span><span class="val">$78.4</span><span class="delta down">-0.9%</span></div>
+      <div class="card metric"><span class="lbl">USD/INR</span><span class="val">83.42</span><span class="delta flat">+0.05%</span></div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h3>🗓️ Event Radar <span class="sub">avoid trading blind into these</span></h3>
+      <div class="row">
+        <span class="chip">Thu · F&amp;O Weekly Expiry</span>
+        <span class="chip">Fri · Reliance Q1 Results</span>
+        <span class="chip">Next Wed · RBI MPC Minutes</span>
+        <span class="chip">Jul 12 · CPI Inflation</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NEWS & SENTIMENT ============ -->
+  <section class="tab" id="news">
+    <div class="grid g2" style="grid-template-columns:minmax(300px,2fr) minmax(240px,1fr)">
+      <div class="card">
+        <h3>News Feed <span class="sub">auto-scored (FinBERT)</span></h3>
+        <div class="row" style="margin-bottom:12px">
+          <span class="chip on">All</span><span class="chip">Positive</span><span class="chip">Negative</span>
+          <span class="chip">IT</span><span class="chip">Banks</span><span class="chip">Auto</span>
+        </div>
+        <div id="newsfeed"></div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>Sentiment Trend <span class="sub">last 7 sessions</span></h3>
+          <svg id="senttrend" viewBox="0 0 260 90" width="100%" height="90"></svg>
+          <div class="note">Net sentiment: <b class="up">+0.34</b> (leaning positive)</div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>🧠 Daily Summary</h3>
+          <p class="mut" style="font-size:.82rem">Market mood is constructive. IT leads on strong US tech and results optimism; PSU banks mildly weak on profit-booking. Auto positive on monthly sales beats. No major negative shocks overnight. Watch crude and expiry-day volatility.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTOR ROTATION ============ -->
+  <section class="tab" id="sector">
+    <div class="card">
+      <h3>Sector Heatmap <span class="sub">today's % change</span></h3>
+      <div class="sechm" id="heatmap"></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>🔥 Hot Sectors <span class="sub">ranked by momentum + relative strength</span></h3>
+      <table>
+        <thead><tr><th>Sector</th><th>% Chg</th><th>Rel. Strength</th><th>Momentum</th><th>News Sentiment</th></tr></thead>
+        <tbody id="sectortbl"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ SWING CANDIDATES ============ -->
+  <section class="tab" id="swing">
+    <div class="banner">🎯 These are <b>screened candidates</b> ranked by a transparent Swing Score — a shortlist for <b>your own review</b>, not buy calls. Every entry shows entry/stop/target so you know your risk first.</div>
+    <div class="card">
+      <h3>Swing Candidates <span class="sub">Nifty 50 · technical + sentiment screen</span></h3>
+      <div class="row" style="margin-bottom:12px">
+        <span class="chip on">All setups</span><span class="chip">Breakout</span><span class="chip">Pullback</span>
+        <span class="chip">Score &gt; 70</span><span class="chip">In hot sector</span>
+      </div>
+      <div style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th>Stock</th><th>LTP</th><th>Swing Score</th><th>Setup</th><th>RSI</th><th>MACD</th>
+          <th>Vol</th><th>Sector</th><th>Entry</th><th>Stop</th><th>Target</th><th>R:R</th><th>News</th>
+        </tr></thead>
+        <tbody id="swingtbl"></tbody>
+      </table>
+      </div>
+      <div class="note">Swing Score = trend 25% · momentum 20% · volume 15% · breakout 20% · sector 10% · news 10%. Click a row (in the real app) to see the full breakdown.</div>
+    </div>
+  </section>
+
+  <!-- ============ RISK & SIZING ============ -->
+  <section class="tab" id="risk">
+    <div class="grid g2" style="grid-template-columns:minmax(280px,1fr) minmax(280px,1fr)">
+      <div class="card">
+        <h3>🛡️ Position-Size Calculator <span class="sub">risk-first</span></h3>
+        <div class="grid g2" style="gap:10px">
+          <div><label class="f">Capital (₹)</label><input id="cap" type="number" value="500000"></div>
+          <div><label class="f">Risk per trade (%)</label><input id="rpt" type="number" value="1"></div>
+          <div><label class="f">Entry price (₹)</label><input id="entry" type="number" value="1500"></div>
+          <div><label class="f">Stop-loss (₹)</label><input id="stop" type="number" value="1455"></div>
+          <div><label class="f">Target (₹)</label><input id="tgt" type="number" value="1620"></div>
+        </div>
+        <button class="toggle" style="margin-top:12px" onclick="calcSize()">Calculate</button>
+        <div id="sizeout" class="grid g3" style="margin-top:14px"></div>
+      </div>
+      <div class="card">
+        <h3>✅ Discipline Checklist <span class="sub">rules &gt; prediction</span></h3>
+        <ul class="reasons">
+          <li>Risk ≤ 1–2% of capital on any single trade</li>
+          <li>Every entry has a pre-defined stop-loss</li>
+          <li>Minimum reward:risk of 2:1 before entering</li>
+          <li>No trading blind into results/expiry/RBI events</li>
+          <li>Avoid stocks in the "avoid list" (bad news / circuit)</li>
+          <li>Book partial at target 1; trail the rest</li>
+        </ul>
+        <div class="banner" style="margin:12px 0 0">Profitability comes from cutting losses small and letting winners run — not from being right every time.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ JOURNAL ============ -->
+  <section class="tab" id="journal">
+    <div class="grid g4" style="margin-bottom:16px">
+      <div class="card metric"><span class="lbl">Win rate</span><span class="val up">58%</span><span class="delta mut">last 30 trades</span></div>
+      <div class="card metric"><span class="lbl">Avg win</span><span class="val up">+6.2%</span><span class="delta mut">per winning trade</span></div>
+      <div class="card metric"><span class="lbl">Avg loss</span><span class="val down">-2.1%</span><span class="delta mut">per losing trade</span></div>
+      <div class="card metric"><span class="lbl">Expectancy</span><span class="val up">+2.7%</span><span class="delta mut">per trade</span></div>
+    </div>
+    <div class="card">
+      <h3>📈 Trade Journal <span class="sub">logged trades → backtest feedback loop</span></h3>
+      <table>
+        <thead><tr><th>Date</th><th>Stock</th><th>Side</th><th>Entry</th><th>Exit</th><th>P/L %</th><th>Setup</th><th>Result</th></tr></thead>
+        <tbody id="jtbl"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== Tabs ===== */
+const TABS=[["pulse","📊 Market Pulse"],["news","📰 News & Sentiment"],["sector","🔥 Sector Rotation"],
+            ["swing","🎯 Swing Candidates"],["risk","🛡️ Risk & Sizing"],["journal","📈 Journal"]];
+const nav=document.getElementById("tabnav");
+TABS.forEach(([id,label],i)=>{const b=document.createElement("button");b.textContent=label;b.className=i===0?"active":"";
+  b.onclick=()=>{document.querySelectorAll("nav.tabs button").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");document.getElementById(id).classList.add("active");window.scrollTo(0,0);};
+  nav.appendChild(b);});
+
+/* ===== Theme ===== */
+function toggleTheme(){const h=document.documentElement;const d=h.getAttribute("data-theme")==="dark";
+  h.setAttribute("data-theme",d?"light":"dark");
+  document.getElementById("themeIcon").textContent=d?"☀️":"🌙";
+  document.getElementById("themeLbl").textContent=d?"Light":"Dark";
+  drawGauge(fg);drawTrend();}
+
+/* ===== Ticker ===== */
+const ticks=[["NIFTY","24,318","+0.59%","up"],["BANKNIFTY","52,040","+0.61%","up"],
+             ["VIX","13.20","-3.3%","down"],["USDINR","83.42","+0.05%","flat"]];
+document.getElementById("ticker").innerHTML=ticks.map(([n,v,c,cl])=>
+  `<span class="t"><span class="mut">${n}</span> <b>${v}</b> <span class="${cl}">${c}</span></span>`).join("");
+
+/* ===== Fear/Greed gauge ===== */
+const fg=38;
+function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function pt(a,r){const rad=a*Math.PI/180;return[100+r*Math.cos(rad),100-r*Math.sin(rad)];}
+function arc(a1,a2,r,col){const[x1,y1]=pt(a1,r),[x2,y2]=pt(a2,r);
+  return `<path d="M${x1} ${y1} A${r} ${r} 0 0 1 ${x2} ${y2}" stroke="${col}" stroke-width="14" fill="none" stroke-linecap="butt"/>`;}
+function drawGauge(v){
+  const segs=[[180,144,cssv('--bear')],[144,108,cssv('--c7')],[108,72,cssv('--neutral')],
+              [72,36,'#8bc34a'],[36,0,cssv('--bull')]];
+  let s=segs.map(([a,b,c])=>arc(a,b,80,c)).join("");
+  const th=180-1.8*v; const[nx,ny]=pt(th,66);
+  s+=`<line x1="100" y1="100" x2="${nx}" y2="${ny}" stroke="${cssv('--text')}" stroke-width="3"/>`;
+  s+=`<circle cx="100" cy="100" r="6" fill="${cssv('--text')}"/>`;
+  document.getElementById("gauge").innerHTML=s;
+  const lbl=v<25?["Extreme Fear","neg"]:v<45?["Fear","neg"]:v<55?["Neutral","neu"]:v<75?["Greed","pos"]:["Extreme Greed","pos"];
+  const el=document.getElementById("fgLbl");el.textContent=lbl[0];el.className="pill "+lbl[1];
+  document.getElementById("fgVal").textContent=v;
+}
+drawGauge(fg);
+
+/* ===== Sentiment trend ===== */
+const trend=[0.1,0.25,-0.15,0.3,0.2,0.45,0.34];
+function drawTrend(){const w=260,h=90,pad=8,n=trend.length,bw=(w-2*pad)/n-6;
+  let s=`<line x1="${pad}" y1="${h/2}" x2="${w-pad}" y2="${h/2}" stroke="${cssv('--border')}" stroke-width="1"/>`;
+  trend.forEach((v,i)=>{const x=pad+i*((w-2*pad)/n)+3;const bh=Math.abs(v)*70;
+    const y=v>=0?h/2-bh:h/2;const col=v>=0?cssv('--bull'):cssv('--bear');
+    s+=`<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="2" fill="${col}"/>`;});
+  document.getElementById("senttrend").innerHTML=s;}
+drawTrend();
+
+/* ===== News feed ===== */
+const news=[
+  ["Infosys raises FY guidance after strong Q1 deal wins","Economic Times · 07:42","pos","Positive"],
+  ["Auto majors report double-digit monthly sales growth","Moneycontrol · 07:20","pos","Positive"],
+  ["PSU banks slip as investors book profits post-rally","Livemint · 06:55","neg","Negative"],
+  ["RBI keeps liquidity tight; bond yields inch up","Business Standard · 06:30","neu","Neutral"],
+  ["Reliance to unveil new energy roadmap at AGM","Economic Times · 06:10","pos","Positive"],
+  ["Crude softens on demand worries — positive for OMCs","Reuters · 05:50","pos","Positive"],
+];
+document.getElementById("newsfeed").innerHTML=news.map(([t,m,c,l])=>
+  `<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:12px">
+     <div><div style="font-weight:500">${t}</div><div class="mut" style="font-size:.75rem">${m}</div></div>
+     <span class="pill ${c}" style="align-self:center">${l}</span></div>`).join("");
+
+/* ===== Sector data ===== */
+const sectors=[["Nifty IT","+1.8","95","Strong","pos"],["Nifty Auto","+1.4","88","Strong","pos"],
+  ["Nifty FMCG","+0.6","64","Neutral","neu"],["Nifty Energy","+0.4","58","Neutral","pos"],
+  ["Nifty Pharma","+0.2","52","Neutral","neu"],["Nifty Metal","-0.3","44","Weak","neu"],
+  ["Nifty PSU Bank","-0.9","32","Weak","neg"],["Nifty Realty","-1.2","28","Weak","neg"]];
+function heatColor(p){const v=parseFloat(p);if(v>=1)return cssv('--bull');if(v>=0.3)return '#5aa469';
+  if(v>-0.3)return cssv('--neutral');if(v>-1)return '#d9694f';return cssv('--bear');}
+document.getElementById("heatmap").innerHTML=sectors.map(([n,p])=>
+  `<div class="cell" style="background:${heatColor(p)}"><span style="font-size:.72rem;opacity:.9">${n}</span><b>${p}%</b></div>`).join("");
+document.getElementById("sectortbl").innerHTML=sectors.map(([n,p,rs,m,c])=>{
+  const cl=parseFloat(p)>=0?"up":"down";const lbl={pos:"Positive",neu:"Neutral",neg:"Negative"}[c];
+  return `<tr><td>${n}</td><td class="${cl}">${p}%</td><td><span class="bar"><i style="width:${rs}%;background:var(--accent)"></i></span> ${rs}</td><td>${m}</td><td><span class="pill ${c}">${lbl}</span></td></tr>`;}).join("");
+
+/* ===== Swing candidates ===== */
+const swing=[
+  ["INFY",1502,82,"Breakout",61,"Bullish","1.9x","IT",1500,1455,1620,"2.7","pos"],
+  ["M&M",2860,78,"Breakout",64,"Bullish","2.2x","Auto",2855,2770,3010,"1.8","pos"],
+  ["TCS",3915,74,"Pullback",57,"Bullish","1.4x","IT",3910,3820,4080,"1.9","pos"],
+  ["SBIN",842,69,"Pullback",52,"Neutral","1.1x","PSU Bank",840,818,890,"2.3","neu"],
+  ["TATAMOTORS",985,66,"Breakout",68,"Bullish","2.6x","Auto",982,948,1050,"2.0","pos"],
+  ["SUNPHARMA",1620,61,"Range","49","Neutral","0.9x","Pharma",1618,1580,1700,"2.1","neu"],
+];
+function scoreColor(s){return s>=75?cssv('--bull'):s>=60?cssv('--neutral'):cssv('--bear');}
+document.getElementById("swingtbl").innerHTML=swing.map(r=>{
+  const[sym,ltp,sc,setup,rsi,macd,vol,sec,en,st,tg,rr,news]=r;
+  const nl={pos:"Pos",neu:"Neu",neg:"Neg"}[news];
+  return `<tr><td><b>${sym}</b></td><td>${ltp}</td>
+    <td><span class="bar"><i style="width:${sc}%;background:${scoreColor(sc)}"></i></span> ${sc}</td>
+    <td>${setup}</td><td>${rsi}</td><td class="up">${macd}</td><td>${vol}</td><td class="mut">${sec}</td>
+    <td>${en}</td><td class="down">${st}</td><td class="up">${tg}</td><td>${rr}</td>
+    <td><span class="pill ${news}">${nl}</span></td></tr>`;}).join("");
+
+/* ===== Position size calc ===== */
+function calcSize(){
+  const cap=+cap_.value,rpt=+rpt_.value,en=+entry_.value,st=+stop_.value,tg=+tgt_.value;
+  const riskAmt=cap*rpt/100;const perShare=Math.abs(en-st);
+  const qty=perShare>0?Math.floor(riskAmt/perShare):0;
+  const rr=perShare>0?((Math.abs(tg-en))/perShare).toFixed(2):"—";
+  const invest=(qty*en).toLocaleString('en-IN');
+  const out=document.getElementById("sizeout");
+  out.innerHTML=`
+   <div class="metric"><span class="lbl">Shares to buy</span><span class="val">${qty}</span></div>
+   <div class="metric"><span class="lbl">Capital at risk</span><span class="val down">₹${riskAmt.toLocaleString('en-IN')}</span></div>
+   <div class="metric"><span class="lbl">Reward:Risk</span><span class="val ${rr>=2?'up':'flat'}">${rr}:1</span></div>
+   <div class="metric"><span class="lbl">Position value</span><span class="val">₹${invest}</span></div>`;
+  out.style.gridColumn="1/-1";
+}
+const cap_=document.getElementById("cap"),rpt_=document.getElementById("rpt"),
+      entry_=document.getElementById("entry"),stop_=document.getElementById("stop"),tgt_=document.getElementById("tgt");
+calcSize();
+
+/* ===== Journal ===== */
+const trades=[["Jul 01","HDFCBANK","Long",1620,1712,"+5.7","Breakout","win"],
+  ["Jun 28","WIPRO","Long",468,455,"-2.8","Pullback","loss"],
+  ["Jun 26","LT","Long",3480,3690,"+6.0","Breakout","win"],
+  ["Jun 24","AXISBANK","Long",1180,1156,"-2.0","Range","loss"],
+  ["Jun 21","BHARTIARTL","Long",1440,1552,"+7.8","Breakout","win"]];
+document.getElementById("jtbl").innerHTML=trades.map(([d,s,side,e,x,pl,setup,res])=>{
+  const cl=parseFloat(pl)>=0?"up":"down";const rp=res==="win"?"pos":"neg";
+  return `<tr><td>${d}</td><td><b>${s}</b></td><td>${side}</td><td>${e}</td><td>${x}</td>
+    <td class="${cl}">${pl}%</td><td class="mut">${setup}</td><td><span class="pill ${rp}">${res}</span></td></tr>`;}).join("");
+</script>
+</body>
+</html>

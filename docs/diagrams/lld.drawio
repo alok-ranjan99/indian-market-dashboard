@@ -1,0 +1,169 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="LLD — Modules &amp; Classes" id="lld-1">
+    <mxGraphModel dx="1200" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Indian Market Dashboard — Low-Level Design (LLD): modules, classes &amp; interfaces" style="text;html=1;align=center;verticalAlign=middle;fontSize=17;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="16" width="900" height="28" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== UI package ===================== -->
+        <mxCell id="ui_pkg" value="ui  (Streamlit presentation)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="250" height="255" as="geometry" />
+        </mxCell>
+        <mxCell id="app" value="&lt;b&gt;StreamlitApp&lt;/b&gt;&lt;hr&gt;+ run()&lt;br&gt;+ render_header()&lt;br&gt;+ render_tabs()" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFF2CC;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="55" y="100" width="220" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="theme" value="&lt;b&gt;ThemeManager&lt;/b&gt;&lt;hr&gt;+ current: Theme&lt;br&gt;+ toggle()&lt;br&gt;+ apply(theme)  // dark/light" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFF2CC;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="55" y="185" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="tabs" value="&lt;b&gt;Tab components&lt;/b&gt;&lt;hr&gt;MarketPulse · News · Sector&lt;br&gt;Swing · Risk · Journal&lt;br&gt;+ render(ctx)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFF2CC;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="55" y="265" width="220" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== config ===================== -->
+        <mxCell id="cfg_pkg" value="config" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#9673A6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="345" width="250" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="config" value="&lt;b&gt;Config&lt;/b&gt;&lt;hr&gt;+ from_env(): Config&lt;br&gt;news_api_key · smtp · tg_token&lt;br&gt;tg_chat_id · universe · weights" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#E1D5E7;strokeColor=#9673A6;" vertex="1" parent="1">
+          <mxGeometry x="55" y="375" width="220" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== scoring package ===================== -->
+        <mxCell id="score_pkg" value="scoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="320" y="70" width="250" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="scorer" value="&lt;b&gt;&#171;interface&#187; Scorer&lt;/b&gt;&lt;hr&gt;+ compute(ctx): ScoreResult" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFE6CC;strokeColor=#D79B00;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="335" y="100" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="fg" value="&lt;b&gt;FearGreedScorer&lt;/b&gt;&lt;hr&gt;+ compute(ctx): ScoreResult&lt;br&gt;vix·breadth·news·momentum·pcr" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFE6CC;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="335" y="165" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="bias" value="&lt;b&gt;BiasScorer&lt;/b&gt;&lt;hr&gt;+ compute(ctx): Bias&lt;br&gt;trend·FII/DII·F&amp;G·global gap" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFE6CC;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="335" y="230" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="swing" value="&lt;b&gt;SwingScorer&lt;/b&gt;&lt;hr&gt;+ compute(stock): SwingScore&lt;br&gt;+ entry_stop_target(atr)&lt;br&gt;trend·mom·vol·breakout·sector·news" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFE6CC;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="335" y="295" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== screener package ===================== -->
+        <mxCell id="scr_pkg" value="screener" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="320" y="430" width="250" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ta" value="&lt;b&gt;TechnicalIndicators&lt;/b&gt;&lt;hr&gt;+ rsi() + macd()&lt;br&gt;+ atr() + breakout() + volume_spike()" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFE6CC;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="335" y="460" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="screener" value="&lt;b&gt;Screener&lt;/b&gt;&lt;hr&gt;+ run(universe): List[Candidate]&lt;br&gt;applies technical + sentiment filter" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#FFE6CC;strokeColor=#D79B00;" vertex="1" parent="1">
+          <mxGeometry x="335" y="535" width="220" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== data package ===================== -->
+        <mxCell id="data_pkg" value="data  (acquisition + storage)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="600" y="70" width="290" height="385" as="geometry" />
+        </mxCell>
+        <mxCell id="provider" value="&lt;b&gt;&#171;interface&#187; DataProvider&lt;/b&gt;&lt;hr&gt;+ fetch(): DataFrame  (cached, retried)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#F8CECC;strokeColor=#B85450;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="615" y="100" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="price" value="&lt;b&gt;PriceProvider&lt;/b&gt;  (yfinance): Nifty50, VIX" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacingLeft=6;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="615" y="160" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="nse" value="&lt;b&gt;NSEProvider&lt;/b&gt;  sectors, FII/DII, PCR" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacingLeft=6;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="615" y="205" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="newsp" value="&lt;b&gt;NewsProvider&lt;/b&gt;  RSS + NewsAPI (dedup)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacingLeft=6;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="615" y="250" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cues" value="&lt;b&gt;GlobalCuesProvider&lt;/b&gt;  Dow, GIFT, crude, USDINR" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacingLeft=6;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="615" y="295" width="260" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cache" value="&lt;b&gt;Cache&lt;/b&gt;&lt;hr&gt;+ get(key)&lt;br&gt;+ set(key, ttl)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="615" y="350" width="125" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="store" value="&lt;b&gt;Store (SQLite)&lt;/b&gt;&lt;hr&gt;+ save_snapshot()&lt;br&gt;+ load_history()" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="750" y="350" width="125" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== sentiment package ===================== -->
+        <mxCell id="sent_pkg" value="sentiment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="600" y="475" width="290" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="finbert" value="&lt;b&gt;SentimentModel (FinBERT)&lt;/b&gt;&lt;hr&gt;+ score(text): float  // -1..+1&lt;br&gt;+ score_batch(list)&lt;br&gt;VADER fallback" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#F8CECC;strokeColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="615" y="505" width="260" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== alerts package ===================== -->
+        <mxCell id="alert_pkg" value="alerts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="920" y="70" width="250" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="notifier" value="&lt;b&gt;&#171;interface&#187; Notifier&lt;/b&gt;&lt;hr&gt;+ send(msg: Signal)" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#D5E8D4;strokeColor=#82B366;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="935" y="100" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="tg" value="&lt;b&gt;TelegramAlerter&lt;/b&gt;  Bot API" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacingLeft=6;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="935" y="160" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="em" value="&lt;b&gt;EmailAlerter&lt;/b&gt;  SMTP" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacingLeft=6;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="935" y="205" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="disp" value="&lt;b&gt;AlertDispatcher&lt;/b&gt;&lt;hr&gt;+ dispatch(signal)&lt;br&gt;fans out to all Notifiers&lt;br&gt;+ threshold check" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=2;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="935" y="255" width="220" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== domain models ===================== -->
+        <mxCell id="dom_pkg" value="domain models  (dataclasses)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;dashed=1;verticalAlign=top;fontStyle=1;strokeColor=#6C8EBF;" vertex="1" parent="1">
+          <mxGeometry x="920" y="360" width="250" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="models" value="&lt;b&gt;Quote&lt;/b&gt; symbol, ohlcv&lt;br&gt;&lt;b&gt;NewsItem&lt;/b&gt; title, src, ts, sentiment&lt;br&gt;&lt;b&gt;SectorPerf&lt;/b&gt; name, chg, rs&lt;br&gt;&lt;b&gt;ScoreResult&lt;/b&gt; value, breakdown{}&lt;br&gt;&lt;b&gt;Bias&lt;/b&gt; label, confidence, reasons[]&lt;br&gt;&lt;b&gt;SwingScore&lt;/b&gt; value, entry, stop, target, rr&lt;br&gt;&lt;b&gt;Candidate&lt;/b&gt; symbol, swing, signals&lt;br&gt;&lt;b&gt;Signal&lt;/b&gt; kind, payload, strength" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="1">
+          <mxGeometry x="935" y="390" width="220" height="185" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== Legend ===================== -->
+        <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;──▷ (hollow, dashed) = implements interface&lt;br&gt;- - -&gt; (open, dashed) = uses / depends on&lt;br&gt;──&gt; (solid) = composes / holds reference" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=6;spacingTop=4;fillColor=#FbFbFb;strokeColor=#999999;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="470" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- ===================== Relationships ===================== -->
+        <!-- UI uses scoring/screener/alerts/theme -->
+        <mxCell id="r1" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="app" target="scorer"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r2" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="app" target="screener"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r3" style="endArrow=open;html=1;rounded=1;" edge="1" parent="1" source="app" target="theme"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r4" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="app" target="disp"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- scorers implement Scorer -->
+        <mxCell id="r5" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="fg" target="scorer"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r6" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="bias" target="scorer"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r7" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="swing" target="scorer"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- scoring uses data + sentiment + technicals -->
+        <mxCell id="r8" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="fg" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r9" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="bias" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r10" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="swing" target="ta"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r11" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="fg" target="finbert"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- screener uses technicals + data -->
+        <mxCell id="r12" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="screener" target="ta"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r13" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="screener" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- providers implement DataProvider -->
+        <mxCell id="r14" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="price" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r15" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="nse" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r16" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="newsp" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r17" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="cues" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- provider uses cache + store -->
+        <mxCell id="r18" style="endArrow=open;html=1;rounded=1;" edge="1" parent="1" source="provider" target="cache"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r19" style="endArrow=open;html=1;rounded=1;" edge="1" parent="1" source="provider" target="store"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- alerts -->
+        <mxCell id="r20" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="tg" target="notifier"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r21" style="endArrow=block;endFill=0;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="em" target="notifier"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="r22" style="endArrow=open;html=1;rounded=1;" edge="1" parent="1" source="disp" target="notifier"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- config feeds providers -->
+        <mxCell id="r23" style="endArrow=open;dashed=1;html=1;rounded=1;" edge="1" parent="1" source="config" target="provider"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
