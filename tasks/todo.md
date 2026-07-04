@@ -58,16 +58,18 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - [x] README with badges + quickstart + architecture table
 - [x] ⛳ **Review**: repo live (public), CI green, app shell verified locally ✅
 
-## Phase 4 — Data Layer 📡  ⛳
+## Phase 4 — Data Layer 📡  ✅ DONE
 *Goal: reliable, cached, tested access to every input the dashboard needs.*
-- [ ] `data/prices.py` (yfinance): Nifty 50 constituents, Nifty, Bank Nifty, India VIX
-- [ ] `data/nse.py`: sectoral indices, FII/DII flows, option chain / PCR (Playwright MCP for blocked pages)
-- [ ] `data/news.py`: RSS (Moneycontrol/ET/Livemint/BS) + NewsAPI, dedup + normalize
-- [ ] `data/global_cues.py`: Dow/Nasdaq, GIFT Nifty, crude, USD/INR
-- [ ] Caching layer (Streamlit cache + on-disk) + graceful fallbacks / rate-limit handling
-- [ ] SQLite schema + writers for daily history (enables later backtest)
-- [ ] Unit tests + a "data health" check script
-- [ ] ⛳ **Review**: one command pulls a full day's data snapshot
+- [x] `data/prices.py` (yfinance): Nifty 50 quotes + Nifty/Bank Nifty/India VIX index helpers → `Quote`
+- [x] `data/nse.py`: sectoral indices, FII/DII, PCR via cookie-primed session — fail-soft (Playwright fallback deferred)
+- [x] `data/news.py`: RSS (Moneycontrol/ET/Livemint/BS), dedup + HTML-unescape (NewsAPI optional, skipped)
+- [x] `data/global_cues.py`: Dow/Nasdaq/Brent/USD-INR/Gold
+- [x] Caching layer (`InMemoryCache` + TTL) + graceful fallbacks on every provider
+- [x] SQLite `Store`: JSON-blob daily snapshots, (kind,day) upsert → backtest history
+- [x] `data/universe.py`: Nifty 50 constituents, config-driven `get_universe` (scales to NIFTY500)
+- [x] `data/snapshot.py`: `collect()` + CLI (`python -m imd.data.snapshot`) — one full-day pull
+- [x] Tests (16 total, data layer mocked/no-network) + **live smoke verified** (RSS, yfinance, NSE all pulled real data)
+- [x] ⛳ **Review**: `python -m imd.data.snapshot` pulls a full day; CI green
 
 ## Phase 5 — Scoring Engine 🧮  ⛳
 *Built as pure, testable functions BEFORE wiring to UI (transparent, no black box).*
@@ -129,3 +131,4 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - 2026-07-04 — HLD **approved** by Alok. Delivered **LLD** (`lld.drawio`) + **data-flow** (`data-flow.drawio`), both valid XML. Locked palette = standard finance (green/red/amber); tokens for dark+light in `docs/design-system.md`. Next gate: sign off LLD + data-flow, then Phase 2 (UI blueprint).
 - 2026-07-04 — LLD + data-flow **approved**. Standing directive saved: build like a senior architect, flexible & scalable. Delivered **Phase 2 UI blueprint** `prototype/index.html` — all 6 tabs, both themes, finance palette, Fear/Greed gauge, swing screener, risk calc. **Verified in-browser via Playwright** (both themes, tabs, no real errors); screenshots in `prototype/screenshots/`. Awaiting blueprint sign-off → then Phase 3 (scaffold + public repo).
 - 2026-07-05 — Prototype **approved**. **Phase 3 complete**: interface-driven `src/imd` scaffold, config, tests, Streamlit shell. Verified locally (ruff clean, 9/9 pytest, app boots HTTP 200). Pushed to **public repo** alok-ranjan99/indian-market-dashboard; **CI green**. Next: Phase 4 (data layer).
+- 2026-07-05 — News source decided: **RSS primary**, NewsAPI skipped (24h delay + no-prod terms). **Phase 4 complete**: price/news/global-cues/NSE providers, InMemoryCache, SQLiteStore, snapshot CLI, universe. 16 tests + **live smoke** (RSS, yfinance, NSE sectors all real). CI green. Next: Phase 5 (scoring engine).
