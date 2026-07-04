@@ -114,6 +114,8 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 
 6. ✅ **Accent/palette** — **standard finance palette** (green=bull, red=bear, amber=neutral). Tokens in `docs/design-system.md`.
 
+7. ✅ **News source** — **RSS primary** (Moneycontrol/ET/Livemint/BS): real-time, free, deploy-safe. NewsAPI skipped (24h delay + no-production terms); `NewsProvider` works without a key.
+
 ## Open decisions (minor, can decide during the phase)
 - Telegram: create the bot now (BotFather) or when we reach Phase 8? (token needed only at alert wiring)
 
