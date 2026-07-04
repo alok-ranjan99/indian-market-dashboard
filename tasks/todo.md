@@ -45,18 +45,18 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - [ ] Map each UI element → its data source + refresh cadence (design ↔ data contract) — do at Phase 3 boundary
 - [ ] ⛳ **Review & sign off** the blueprint (open `prototype/index.html`)
 
-## Phase 3 — Scaffold & Repo 🏗️  ⛳
+## Phase 3 — Scaffold & Repo 🏗️  ✅ DONE
 *Goal: a clean, professional skeleton pushed to GitHub with CI green on an empty app.*
-- [ ] Project structure:
-      `src/` (data/, sentiment/, scoring/, screener/, alerts/, ui/), `tests/`, `data/`, `.streamlit/`, `docs/`
-- [ ] `pyproject.toml` / `requirements.txt` + pinned deps; Python 3.11 venv
-- [ ] `.gitignore`, `.env.example`, `config.py` (env-driven), secrets strategy (never commit keys)
-- [ ] `.streamlit/config.toml` theme from Phase 2 design tokens (dark + light)
-- [ ] `git init` → create **PUBLIC GitHub repo** `indian-market-dashboard` (via GitHub MCP / `gh`) → push
-- [ ] Minimal runnable Streamlit shell (nav + empty tabs + header + theme toggle) — proves the skeleton
-- [ ] **CI**: GitHub Actions (lint `ruff` + `pytest` smoke + `streamlit` import check)
-- [ ] README with run instructions + badges
-- [ ] ⛳ **Review**: repo live (public), CI green, app shell runs locally
+- [x] Project structure: `src/imd/` (domain, data, sentiment, scoring, screener, alerts, ui/tabs), `tests/`, `.streamlit/`
+- [x] `pyproject.toml` + `requirements.txt`; Python 3.11 venv (uv). Extras: `[dev]`, `[ml]` (FinBERT), `[ta]` (indicators)
+- [x] `.gitignore`, `.env.example`, `config.py` (pydantic-settings, IMD_ env prefix), secrets never committed
+- [x] `.streamlit/config.toml` (dark base) + runtime theme tokens in `ui/theme.py` (dark + light)
+- [x] Interface seams from LLD: `DataProvider`, `SentimentModel`, `Scorer`, `Notifier` + `AlertDispatcher`
+- [x] **PUBLIC repo**: https://github.com/alok-ranjan99/indian-market-dashboard (pushed via `gh`)
+- [x] Runnable Streamlit shell (header + dark/light toggle + 6-tab nav) — booted headless, HTTP 200
+- [x] **CI green**: GitHub Actions (ruff + 9 pytest + import check) — verified passing
+- [x] README with badges + quickstart + architecture table
+- [x] ⛳ **Review**: repo live (public), CI green, app shell verified locally ✅
 
 ## Phase 4 — Data Layer 📡  ⛳
 *Goal: reliable, cached, tested access to every input the dashboard needs.*
@@ -126,3 +126,4 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - 2026-07-04 — Reordered to put **HLD/LLD (Phase 1, draw.io)** before UI blueprint (Phase 2). Locked all 5 setup decisions. Chose versioned `.drawio` XML over live draw.io MCP for architecture docs. Delivered **HLD v1** (`docs/diagrams/hld.drawio`, valid XML) for review.
 - 2026-07-04 — HLD **approved** by Alok. Delivered **LLD** (`lld.drawio`) + **data-flow** (`data-flow.drawio`), both valid XML. Locked palette = standard finance (green/red/amber); tokens for dark+light in `docs/design-system.md`. Next gate: sign off LLD + data-flow, then Phase 2 (UI blueprint).
 - 2026-07-04 — LLD + data-flow **approved**. Standing directive saved: build like a senior architect, flexible & scalable. Delivered **Phase 2 UI blueprint** `prototype/index.html` — all 6 tabs, both themes, finance palette, Fear/Greed gauge, swing screener, risk calc. **Verified in-browser via Playwright** (both themes, tabs, no real errors); screenshots in `prototype/screenshots/`. Awaiting blueprint sign-off → then Phase 3 (scaffold + public repo).
+- 2026-07-05 — Prototype **approved**. **Phase 3 complete**: interface-driven `src/imd` scaffold, config, tests, Streamlit shell. Verified locally (ruff clean, 9/9 pytest, app boots HTTP 200). Pushed to **public repo** alok-ranjan99/indian-market-dashboard; **CI green**. Next: Phase 4 (data layer).
