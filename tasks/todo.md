@@ -82,14 +82,20 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - [x] Golden-file unit tests (23 new, 39 total); ruff clean
 - [x] ⛳ **Review**: scores reproducible + explainable; verified end-to-end on live data; CI green
 
-## Phase 6 — Build Tabs (design-driven) 🖥️
+## Phase 6 — Build Tabs (design-driven) 🖥️  (pass 1 ✅ / pass 2 pending)
 *Port the Phase 1 blueprint into Streamlit, one screen at a time.*
-- [ ] Tab 1 — **Market Pulse**: Fear/Greed gauge, Bias card w/ reasons, Nifty/BankNifty/VIX/FII-DII
-- [ ] Tab 2 — **News & Sentiment**: FinBERT scoring, scored feed, trend chart, daily summary
+**Pass 1 — hero screens (done, verified live, CI green):**
+- [x] Tab 1 — **Market Pulse**: Fear/Greed Plotly gauge, Bias card w/ reasons, Nifty/BankNifty/VIX/FII-DII, global cues
+- [x] Tab 4 — **Swing Candidates**: live screener table, Swing Score bars, entry/stop/target (ATR), R:R
+- [x] Service layer (DI, testable) + cached UI data + VADER sentiment + theme toggle bug fixed
+- [x] ⛳ **Review**: hero screens match blueprint (screenshots in `docs/screenshots/phase6/`)
+
+**Pass 2 — remaining screens:**
+- [ ] Tab 2 — **News & Sentiment**: scored feed, sentiment trend chart, daily summary
 - [ ] Tab 3 — **Sector Rotation**: heatmap + relative-strength ranking + sentiment overlay
-- [ ] Tab 4 — **Swing Candidates**: screener table, Swing Score, entry/stop/target (ATR), R:R
-- [ ] Global header: live indices ticker + pre-market briefing + event/expiry flags
-- [ ] ⛳ **Review**: hero screens match blueprint
+- [ ] Global header polish: pre-market briefing + event/expiry flags
+- [ ] (Optional) FinBERT model via `[ml]` extra for model-grade sentiment
+- [ ] ⛳ **Review**: all six screens complete
 
 ## Phase 7 — Risk, Sizing & Journal 🛡️
 - [ ] Position-size calculator (capital + risk% → shares), stop/target calc, portfolio risk view
@@ -135,3 +141,4 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - 2026-07-05 — Prototype **approved**. **Phase 3 complete**: interface-driven `src/imd` scaffold, config, tests, Streamlit shell. Verified locally (ruff clean, 9/9 pytest, app boots HTTP 200). Pushed to **public repo** alok-ranjan99/indian-market-dashboard; **CI green**. Next: Phase 4 (data layer).
 - 2026-07-05 — News source decided: **RSS primary**, NewsAPI skipped (24h delay + no-prod terms). **Phase 4 complete**: price/news/global-cues/NSE providers, InMemoryCache, SQLiteStore, snapshot CLI, universe. 16 tests + **live smoke** (RSS, yfinance, NSE sectors all real). CI green. Next: Phase 5 (scoring engine).
 - 2026-07-05 — **Phase 5 complete**: indicators (pure pandas), Fear/Greed + Bias + Swing scorers, engine. 39 tests, CI green. Caught + fixed a real defect during live verify — Bias labelled BEARISH at 0.16 confidence (fixed-100 denominator); now normalizes vs available weight + wider neutral band → coherent low-confidence Neutral. Next: Phase 6 (build tabs, wire scores to UI).
+- 2026-07-06 — **Phase 6 pass 1 complete**: live Market Pulse + Swing tabs, service layer (DI), VADER sentiment, cached UI data, Plotly gauge. 48 tests, CI green. Verified live in-browser (both themes). Fixed a theme render-ordering bug (toggle one render behind) found via live screenshot. Next: Phase 6 pass 2 (News & Sentiment + Sector Rotation tabs).
