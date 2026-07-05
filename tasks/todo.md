@@ -71,14 +71,16 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - [x] Tests (16 total, data layer mocked/no-network) + **live smoke verified** (RSS, yfinance, NSE all pulled real data)
 - [x] ⛳ **Review**: `python -m imd.data.snapshot` pulls a full day; CI green
 
-## Phase 5 — Scoring Engine 🧮  ⛳
+## Phase 5 — Scoring Engine 🧮  ✅ DONE
 *Built as pure, testable functions BEFORE wiring to UI (transparent, no black box).*
-- [ ] Fear/Greed score (VIX 25% + breadth 20% + news sentiment 20% + momentum 20% + PCR 15%)
-- [ ] Daily Bias (trend vs 20/50 DMA + FII/DII + Fear/Greed + global-cues gap) w/ reasons + confidence
-- [ ] Per-stock Swing Score (trend 25 / momentum 20 / volume 15 / breakout 20 / sector 10 / news 10)
-- [ ] Each score returns a **breakdown** (the "why") for UI display
-- [ ] Golden-file unit tests on known inputs
-- [ ] ⛳ **Review**: scores reproducible + explainable
+- [x] Indicators in pure pandas (RSI/MACD/ATR/SMA/EMA/breakout/volume) — no pandas-ta, 3.11-safe
+- [x] Fear/Greed score (VIX/breadth/news/momentum/PCR) w/ **fail-soft weight renormalization** + breakdown
+- [x] Daily Bias (trend + FII/DII + Fear/Greed + global gap), normalized vs available weight → label +
+      confidence + reasons (thin-data → low-confidence Neutral, not a false directional call)
+- [x] Per-stock Swing Score (trend/momentum/volume/breakout/sector/news) + ATR entry/stop/target @ 2:1
+- [x] Every score returns a transparent **breakdown** for the UI
+- [x] Golden-file unit tests (23 new, 39 total); ruff clean
+- [x] ⛳ **Review**: scores reproducible + explainable; verified end-to-end on live data; CI green
 
 ## Phase 6 — Build Tabs (design-driven) 🖥️
 *Port the Phase 1 blueprint into Streamlit, one screen at a time.*
@@ -132,3 +134,4 @@ versioned `.drawio` files in `docs/diagrams/`, editable by Alok in draw.io.*
 - 2026-07-04 — LLD + data-flow **approved**. Standing directive saved: build like a senior architect, flexible & scalable. Delivered **Phase 2 UI blueprint** `prototype/index.html` — all 6 tabs, both themes, finance palette, Fear/Greed gauge, swing screener, risk calc. **Verified in-browser via Playwright** (both themes, tabs, no real errors); screenshots in `prototype/screenshots/`. Awaiting blueprint sign-off → then Phase 3 (scaffold + public repo).
 - 2026-07-05 — Prototype **approved**. **Phase 3 complete**: interface-driven `src/imd` scaffold, config, tests, Streamlit shell. Verified locally (ruff clean, 9/9 pytest, app boots HTTP 200). Pushed to **public repo** alok-ranjan99/indian-market-dashboard; **CI green**. Next: Phase 4 (data layer).
 - 2026-07-05 — News source decided: **RSS primary**, NewsAPI skipped (24h delay + no-prod terms). **Phase 4 complete**: price/news/global-cues/NSE providers, InMemoryCache, SQLiteStore, snapshot CLI, universe. 16 tests + **live smoke** (RSS, yfinance, NSE sectors all real). CI green. Next: Phase 5 (scoring engine).
+- 2026-07-05 — **Phase 5 complete**: indicators (pure pandas), Fear/Greed + Bias + Swing scorers, engine. 39 tests, CI green. Caught + fixed a real defect during live verify — Bias labelled BEARISH at 0.16 confidence (fixed-100 denominator); now normalizes vs available weight + wider neutral band → coherent low-confidence Neutral. Next: Phase 6 (build tabs, wire scores to UI).
