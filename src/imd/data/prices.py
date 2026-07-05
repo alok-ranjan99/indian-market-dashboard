@@ -48,6 +48,37 @@ class PriceProvider(DataProvider):
             raise ValueError(f"Unknown index {key!r}. Known: {list(INDEX_SYMBOLS)}")
         return self._download([symbol]).get(symbol)
 
+    def history(self, symbol: str, period: str = "3mo") -> pd.DataFrame:
+        """OHLCV history for one symbol (oldest→newest). Empty frame on failure."""
+        try:
+            df = yf.download(symbol, period=period, interval="1d",
+                             auto_adjust=False, progress=False)
+        except Exception:  # noqa: BLE001
+            logger.exception("history download failed for %s", symbol)
+            return pd.DataFrame()
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [c[0] for c in df.columns]  # flatten single-ticker frame
+        return df
+
+    def histories(self, symbols: list[str], period: str = "6mo") -> dict[str, pd.DataFrame]:
+        """Batched OHLCV history for many symbols (one network round-trip)."""
+        try:
+            data = yf.download(symbols, period=period, interval="1d", group_by="ticker",
+                               auto_adjust=False, progress=False, threads=True)
+        except Exception:  # noqa: BLE001
+            logger.exception("batch history download failed (%d symbols)", len(symbols))
+            return {}
+        out: dict[str, pd.DataFrame] = {}
+        multi = isinstance(data.columns, pd.MultiIndex)
+        for sym in symbols:
+            try:
+                df = (data[sym] if multi else data).dropna(how="all")
+                if not df.empty:
+                    out[sym] = df
+            except KeyError:
+                logger.debug("no history for %s", sym)
+        return out
+
     # ── internal ──────────────────────────────────────────────
     def _download(self, symbols: list[str]) -> dict[str, Quote]:
         try:

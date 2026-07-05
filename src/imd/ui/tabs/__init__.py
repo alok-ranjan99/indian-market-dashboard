@@ -1,8 +1,7 @@
-"""Tab renderers. Each is a pure `render(ctx)` function so the app shell stays thin.
+"""Tab renderers + registry. Adding a tab is a one-line change here.
 
-Phase 3 ships placeholders; real content lands in Phase 6, wired to the scoring
-engine and data layer. The tab registry below drives the nav so adding a tab is a
-one-line change.
+Market Pulse and Swing Candidates are live (Phase 6 pass 1); the rest are placeholders
+until pass 2. Each renderer is a zero-arg ``render()`` that pulls its own cached data.
 """
 
 from __future__ import annotations
@@ -10,6 +9,8 @@ from __future__ import annotations
 from collections.abc import Callable
 
 import streamlit as st
+
+from imd.ui.tabs import market_pulse, swing
 
 # (key, label) — order defines nav order.
 TAB_REGISTRY: list[tuple[str, str]] = [
@@ -26,33 +27,23 @@ def _placeholder(title: str, blurb: str) -> Callable[[], None]:
     def render() -> None:
         st.subheader(title)
         st.info(blurb)
-        st.caption("Placeholder — wired up in a later phase.")
+        st.caption("Coming in Phase 6 pass 2.")
     return render
 
 
 RENDERERS: dict[str, Callable[[], None]] = {
-    "pulse": _placeholder(
-        "Market Pulse",
-        "Fear/Greed meter, daily bias, key indices, FII/DII flows, global cues.",
-    ),
+    "pulse": market_pulse.render,
     "news": _placeholder(
-        "News & Sentiment",
-        "Auto-scored headlines, sentiment trend, and a daily market summary.",
+        "News & Sentiment", "Auto-scored headlines, sentiment trend, daily summary."
     ),
     "sector": _placeholder(
-        "Sector Rotation",
-        "Sector heatmap and momentum/relative-strength ranking.",
+        "Sector Rotation", "Sector heatmap and momentum/relative-strength ranking."
     ),
-    "swing": _placeholder(
-        "Swing Candidates",
-        "Screened shortlist with a transparent Swing Score and entry/stop/target.",
-    ),
+    "swing": swing.render,
     "risk": _placeholder(
-        "Risk & Sizing",
-        "Position-size calculator and a trading-discipline checklist.",
+        "Risk & Sizing", "Position-size calculator and a trading-discipline checklist."
     ),
     "journal": _placeholder(
-        "Journal",
-        "Trade log with win-rate/expectancy stats feeding the backtest loop.",
+        "Journal", "Trade log with win-rate/expectancy stats feeding the backtest loop."
     ),
 }

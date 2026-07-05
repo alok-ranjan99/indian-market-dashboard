@@ -1,1 +1,5 @@
-"""Screener — technical indicators + candidate selection (implemented in Phase 4-6)."""
+"""Screener — technical indicators + candidate selection."""
+
+from imd.screener.screen import screen_candidates, sector_strength_map
+
+__all__ = ["screen_candidates", "sector_strength_map"]

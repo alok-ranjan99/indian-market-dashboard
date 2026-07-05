@@ -1,7 +1,4 @@
-"""Streamlit app shell.
-
-Phase 3 deliverable: a runnable skeleton — header, theme toggle, and the full tab
-nav with placeholders — proving structure + theming before feature work.
+"""Streamlit app shell — header, theme toggle, refresh, and the tab nav.
 
 Run locally:   streamlit run streamlit_app.py
 """
@@ -12,6 +9,7 @@ import streamlit as st
 
 from imd import __version__
 from imd.config import get_settings
+from imd.ui import data
 from imd.ui.tabs import RENDERERS, TAB_REGISTRY
 from imd.ui.theme import css_variables
 
@@ -21,7 +19,8 @@ def _init_state() -> None:
         st.session_state.theme = "dark"
 
 
-def _render_header() -> None:
+def _render_header() -> str:
+    """Render header + controls and return the (possibly just-toggled) theme."""
     settings = get_settings()
     left, right = st.columns([0.8, 0.2])
     with left:
@@ -31,21 +30,23 @@ def _render_header() -> None:
             "decision-support, **not financial advice**"
         )
     with right:
-        is_dark = st.session_state.theme == "dark"
-        if st.toggle("🌙 Dark", value=is_dark, key="theme_toggle"):
-            st.session_state.theme = "dark"
-        else:
-            st.session_state.theme = "light"
+        # Read the toggle's value on THIS run so CSS (injected after) uses the new theme.
+        dark = st.toggle("🌙 Dark", value=(st.session_state.theme == "dark"))
+        st.session_state.theme = "dark" if dark else "light"
+        if st.button("🔄 Refresh data", use_container_width=True):
+            data.clear_all()
+            st.rerun()
+    return st.session_state.theme
 
 
 def main() -> None:
     st.set_page_config(page_title="Indian Market Dashboard", page_icon="📈", layout="wide")
     _init_state()
 
-    # Apply theme tokens before rendering content.
-    st.markdown(css_variables(st.session_state.theme), unsafe_allow_html=True)
-
-    _render_header()
+    # Render header first so the theme toggle is processed, THEN inject CSS (global <style>
+    # applies regardless of DOM position) so the selected theme takes effect this run.
+    theme = _render_header()
+    st.markdown(css_variables(theme), unsafe_allow_html=True)
     st.divider()
 
     labels = [label for _, label in TAB_REGISTRY]

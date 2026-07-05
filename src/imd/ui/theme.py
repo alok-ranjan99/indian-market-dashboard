@@ -38,7 +38,16 @@ def css_variables(theme: str) -> str:
     return f"""
     <style>
       :root {{ {vars_block} }}
-      .stApp {{ background:{t['bg']}; color:{t['text']}; }}
+      .stApp, [data-testid="stAppViewContainer"] {{ background:{t['bg']}; color:{t['text']}; }}
+      [data-testid="stHeader"] {{ background:{t['bg']}; }}
+      /* native widgets follow config.toml's base theme; nudge the visible chrome to match */
+      .stButton > button {{
+        background:{t['panel2']}; color:{t['text']}; border:1px solid {t['border']};
+      }}
+      [data-testid="stMetric"] {{
+        background:{t['panel']}; border:1px solid {t['border']}; border-radius:10px; padding:12px;
+      }}
+      [data-testid="stMetricValue"], [data-baseweb="tab"] {{ color:{t['text']}; }}
       .imd-up {{ color:{t['bull']}; }}
       .imd-down {{ color:{t['bear']}; }}
       .imd-flat {{ color:{t['neutral']}; }}
